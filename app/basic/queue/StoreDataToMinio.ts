@@ -1,11 +1,11 @@
 import BaseQueue from "@root/base/ts/BaseQueue";
 import MinioService from "../services/MinioService";
 
-export default class StoreDataToMinio extends BaseQueue{
-  queue_name = 'MINIO_STORE_DATA';
+export default BaseQueue.extend({
+  queue_name : 'MINIO_STORE_DATA',
   returnMinioService(){
-    return new MinioService();
-  }
+    return MinioService.create();
+  },
   async process(job : any, done : Function){
     try{
       let minio = this.returnMinioService();
@@ -35,5 +35,4 @@ export default class StoreDataToMinio extends BaseQueue{
       done(null)
     }
   }
-  
-}
+});

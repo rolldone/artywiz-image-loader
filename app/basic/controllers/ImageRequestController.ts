@@ -1,15 +1,16 @@
-import BaseController from "@root/base/ts/BaseController";
 import express from 'express';
 import ImageLoaderService from "../services/ImageLoaderService";
+import BaseController from './BaseController';
 
-export default class ImageReequestController extends BaseController{
-  constructor(){
-    super();
-    this.index = this.index.bind(this);
-  }
+interface ImageRequestInterface extends BaseControlerInterface {
+  returnImageLoaderService : Function
+  index : Function
+}
+
+export default BaseController.extend(<ImageRequestInterface>{
   returnImageLoaderService(){
-    return new ImageLoaderService();
-  }
+    return ImageLoaderService.create();
+  },
   async index(req : express.Request ,res : express.Response){
     try{
       let self = this;
@@ -51,5 +52,4 @@ export default class ImageReequestController extends BaseController{
       return this.returnSimpleError(ex,res);
     }
   }
-  
-}
+});

@@ -18,8 +18,8 @@ multithread(() => {
       /* Your can define your own stack bootstrap here */
       function(callback : Function){
         /* You can Define route here */
-          new Web(global.app);
-          new Api(global.app);
+          Web.create(global.app);
+          Api.create(global.app);
           callback(null);
       }],
     run : function(){

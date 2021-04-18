@@ -3260,6 +3260,11 @@ object.pick@^1.3.0:
   dependencies:
     isobject "^3.0.1"
 
+objectmodel@^4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/objectmodel/-/objectmodel-4.2.3.tgz#7a9a2d85d086526f98c6470d4b9cafc7fbb753b8"
+  integrity sha512-dbA4TDDjjWv+ljEcaHSmgcZHNCnOLKeRx2uEYI6uFRNromo/xEPECg6bxzX6Vp6mWVbBicIns91FyDud0vPAPQ==
+
 on-finished@~2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/on-finished/-/on-finished-2.3.0.tgz#20f1336481b083cd75337992a16971aa2d906947"

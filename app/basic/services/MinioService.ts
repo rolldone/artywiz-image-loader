@@ -13,12 +13,15 @@ interface MinioGetImageInterface{
   fileName : String,
   contentType ?: String 
 }
+interface MinioServiceInterface extends BaseServiceInterface{
+  baseBucketName : string
+}
 
-export default class MinioService extends BaseService{
+export default BaseService.extend(<MinioServiceInterface>{
   /* Important */
   /* Bucket name is strict please read this documentation
      https://docs.rightscale.com/faq/clouds/aws/What_are_valid_S3_bucket_names.html#:~:text=Bucket%20names%20should%20not%20contain,3%20and%2063%20characters%20long */
-  baseBucketName : string = 'imgch-'
+  baseBucketName : 'imgch-',
   createBucket(bucketName : string, region : any = null){
     let self = this;
     return new Promise(function(resolve){
@@ -50,7 +53,7 @@ export default class MinioService extends BaseService{
         console.log('Bucket exists:', bucketName);
       });
     });
-  }
+  },
   putImageObject(props : MinioPutObjectInterface){
     let self = this;
     return new Promise(function(resolve, reject){
@@ -70,7 +73,7 @@ export default class MinioService extends BaseService{
         console.log('File uploaded successfully.');
       });
     })
-  }
+  },
   getImage(props : MinioGetImageInterface) {
     let self = this;
     return new Promise(function(resolve, rejected){
@@ -92,4 +95,4 @@ export default class MinioService extends BaseService{
       });
     });
 	}
-}
+})

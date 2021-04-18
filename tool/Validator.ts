@@ -1,6 +1,6 @@
 const LibValidator = require('validatorjs');
 
-export default class Validator{
+export default class Validator implements ValidatorInterface{
   validator : any = null
   constructor(data : Object,rules : Object){
     let self = this;
@@ -26,7 +26,7 @@ export default class Validator{
       self.validator.checkAsync(passes,fails);
     });
   }
-  passes : Boolean = false
-  fails : Boolean = false
+  passes = false
+  fails = false
   errors : any = null
 }

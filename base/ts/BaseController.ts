@@ -1,8 +1,9 @@
 import express from 'express';
+import BaseProto from './BaseProto';
 const {serializeError, deserializeError} = require('serialize-error');
 
-export default class BaseController{
-  constructor(){
+export default BaseProto.extend({
+  construct(){
     let self : any= this;
     try{
       for(var key in self){
@@ -22,7 +23,7 @@ export default class BaseController{
       console.error('----------------------------------------------------------------------------------------------------------'); 
       console.error(ex);
     }
-  }
+  },
   getBaseQuery(req : express.Request, aditional : object) : void {
     let props : any = req.query;
     /* More manually base query here */
@@ -34,12 +35,12 @@ export default class BaseController{
       ...aditional
     }
     return props;
-  }
-  returnSimpleError(ex : any,res : express.Response) : void{
+  },
+  returnSimpleError(ex : any, res : express.Response) : void{
     res.json({
       status : 'error',
       status_code : 400,
       return : serializeError(ex)
     });
   }
-}
+} as BaseControlerInterface);

@@ -1,7 +1,8 @@
 import ImageLoaderQueue from "../queue/ImageLoaderQueue";
 import BaseService from "./BaseService";
 const md5 = require('md5');
-export default class ImageLoaderService extends BaseService{
+
+export default BaseService.extend(<BaseServiceInterface>{
   async createJobImageLoader(props : any){
     let validator = this.returnValidator(props,{
       url : 'required',
@@ -14,12 +15,11 @@ export default class ImageLoaderService extends BaseService{
     props.created_at = new Date().getUTCMilliseconds();
     let hash : string = md5(props.url+props.size);
     // let queue = await ImageLoaderQueue.getJob(hash);
-    
-    ImageLoaderQueue.dispatch(props,function(props : any){
+    (<BaseQueueInterface>ImageLoaderQueue).dispatch(props,function(props : any){
       console.log('hash -> ',hash);
       console.log('queue -> ',props);
       // console.log('props',props);
-    }).setTimeout(100).setJobId(hash);
+    }).setTimeout(1).setJobId(hash);
     return hash;
   }
-}
+});

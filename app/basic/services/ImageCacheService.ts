@@ -1,7 +1,13 @@
 import BaseService from "./BaseService";
 
-export default class ImageCacheService extends BaseService{
-  expired_cache : number = 259200
+interface ImageCacheInterface extends BaseServiceInterface {
+  expired_cache : number
+  getImage : {(fileName : string ) : void }
+  saveImage : {(props : object) : void }
+}
+
+export default BaseService.extend(<ImageCacheInterface>{
+  expired_cache : 259200,
   getImage(fileName : string){
     return new Promise(function(resolve){
         global.redis.get(fileName,function(err : any,data : any){
@@ -17,7 +23,7 @@ export default class ImageCacheService extends BaseService{
           }
         });
     });
-  }
+  },
   saveImage(props : {
     data : any,
     size : number,
@@ -27,5 +33,5 @@ export default class ImageCacheService extends BaseService{
     global.redis.set(props.file_name,props.data,'EX', this.expired_cache, function(data : any){
       console.log(props.file_name +' key is set');
     });
-  } 
-}
+  },
+});

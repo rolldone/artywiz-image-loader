@@ -1,10 +1,11 @@
 import BaseQueue from "@root/base/ts/BaseQueue";
 import ImageCacheService from "../services/ImageCacheService";
-export default class ImageCacheQueue extends BaseQueue{
-  queue_name = 'IMAGE_CACHE_DATA';
+
+export default BaseQueue.extend({
+  queue_name : 'IMAGE_CACHE_DATA',
   returnImageCacheService(){
-    return new ImageCacheService();
-  }
+    return ImageCacheService.create();
+  },
   async process(job : any, done : Function){
     try{
       let imageCacheService = this.returnImageCacheService();
@@ -21,5 +22,4 @@ export default class ImageCacheQueue extends BaseQueue{
       done(null)
     }
   }
-  
-}
+});

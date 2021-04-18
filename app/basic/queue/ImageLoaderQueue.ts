@@ -5,13 +5,11 @@ import StoreDataToMinio from "./StoreDataToMinio";
 import MinioService from "../services/MinioService";
 import ImageCacheQueue from "./ImageCacheQueue";
 
-
-
-export default class ImageLoaderQueue extends BaseQueue{
-  queue_name = 'IMAGE_LOADER_QUEUE';
+export default BaseQueue.extend({
+  queue_name : 'IMAGE_LOADER_QUEUE',
   returnMinioService(){
-    return new MinioService();
-  }
+    return MinioService.create();
+  },
   getCache(id : string){
     return new Promise(function(resolve){
       global.redis.get(id,function(err:any, data : any){
@@ -21,10 +19,10 @@ export default class ImageLoaderQueue extends BaseQueue{
         return resolve(data);
       });
     })  
-  }
+  },
   async process(job : any, done : Function){
     try{
-      console.log(this.getQueueName()+' job is running');
+      console.log(this.getQueueName()+' '+job.id+' job is execute!');
       var cache = await this.getCache(job.id);
       if(cache != null){
         // global.pubsub.emit(job.id,cache);
@@ -46,7 +44,7 @@ export default class ImageLoaderQueue extends BaseQueue{
             .then((data) => {
 
               if (data instanceof Buffer)
-              ImageCacheQueue.dispatch({
+              (<BaseQueueInterface>ImageCacheQueue).dispatch({
                 data : data.toString('base64'),
                 size : job.data.size,
                 file_name : job.id,
@@ -55,7 +53,7 @@ export default class ImageLoaderQueue extends BaseQueue{
                 console.log('ImageCacheQueue.dispatch - ',props);
               }).setTimeout(1000).setJobId(job.id);
 
-              StoreDataToMinio.dispatch({
+              (<BaseQueueInterface>StoreDataToMinio).dispatch({
                 bucketName : job.data.size+"",
                 fileName : job.id+".png",
                 data : data,
@@ -80,7 +78,7 @@ export default class ImageLoaderQueue extends BaseQueue{
         }else{
           global.nrp.emit(job.id,existImageMinio);
           if (existImageMinio instanceof Buffer)
-          ImageCacheQueue.dispatch({
+          (<BaseQueueInterface>ImageCacheQueue).dispatch({
             data : existImageMinio.toString('base64'),
             size : job.data.size,
             file_name : job.id,
@@ -97,4 +95,4 @@ export default class ImageLoaderQueue extends BaseQueue{
     }
     
   }
-}
+});

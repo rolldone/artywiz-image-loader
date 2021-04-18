@@ -1,10 +1,11 @@
 import { Moment, Validator } from "@root/tool";
+import BaseProto from "./BaseProto";
 
-export default class BaseService{
-  returnValidator(form_data : Object,form_rule : Object){
+export default BaseProto.extend({
+  returnValidator(form_data,form_rule){
     return new Validator(form_data,form_rule);
-  }
+  },
   returnMoment(){
     return Moment();
   }
-}
+} as BaseServiceInterface);

@@ -1,8 +1,24 @@
 var NameRouter = require('named-routes');
 import express, { Router } from 'express';
+const uberproto = require('uberproto');
 
-export default class BaseRoute {
-  constructor(app : any){
+export interface BaseRouteInterface{
+  childRouter ?: express.Router
+  router ?: typeof NameRouter
+  app ?: any
+  _path ?: string
+  _middleware ?: Array<any>
+  set ?: Function
+  use ?: Function
+  get ?: Function
+  post ?: Function
+  baseRoute : string 
+  onready : Function
+}
+
+export default uberproto.extend({
+  __init : 'construct',
+  construct(app : any){
     this.router.extendExpress(app);
     this.router.registerAppHelpers(app);
     this.app = app;
@@ -10,16 +26,16 @@ export default class BaseRoute {
     this.childRouter = express.Router();
     this.router.extendExpress(this.childRouter);
     this.onready();
-  }
-  childRouter : Router = null
-  router : any = new NameRouter()
-  app : any = null
-  baseRoute : string = ''
-  _path : string = ''
-  _middleware : Array<any> = []
+  },
+  childRouter : null,
+  router : new NameRouter(),
+  app : null,
+  baseRoute : '',
+  _path : '',
+  _middleware : [],
   onready(){
     console.log('onready - Override this function');
-  }
+  },
   // use : function(path,middleware=[],callbackRouter){
   //   path = this.baseRoute+path;
   //   callbackRouter(this);
@@ -29,7 +45,7 @@ export default class BaseRoute {
     this._path = path;
     this._middleware = middleware;
     callbackRouter(this);
-  }
+  },
   set(action : string,...props : Array<any>){
     props[0]=this.baseRoute+(this._path||'')+props[0];
     console.log('action',action);
@@ -39,14 +55,15 @@ export default class BaseRoute {
       this._middleware,
       ...props[2]
     ]
+    console.log('action -> ',props[0]);
     this.app[action].call(this.app,...props);
-  }
+  },
   get(...props:Array<any>){
     this.set('get',...props);
-  }
+  },
   post(...props:Array<any>){
     this.set('post',...props);
-  }
+  },
   displayRoute(req : any, res : any){
     let routesByNameAndMethod = (function(datas){
       let newKeys = [];
@@ -73,4 +90,4 @@ export default class BaseRoute {
     }
     return res.status(displayRoutes.status_code).send(displayRoutes);
   }
-}
+} as BaseRouteInterface)
