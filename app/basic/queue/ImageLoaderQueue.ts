@@ -82,7 +82,8 @@ const ImageLoaderQueue : ImageLoaderQueueInteface = BaseQueue.extend(<ImageLoade
               done(true);
             })
         }else{
-          global.nrp.emit(job.id,existImageMinio);
+          if (existImageMinio instanceof Buffer)
+          global.nrp.emit(job.id,existImageMinio.toString('base64'));
           if (existImageMinio instanceof Buffer)
           ImageCacheQueue.dispatch({
             data : existImageMinio.toString('base64'),

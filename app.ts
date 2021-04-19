@@ -27,4 +27,4 @@ multithread(() => {
       /* You can create some programatic code here */
     }
   } as AppInterface);
-},2);
+},4);
