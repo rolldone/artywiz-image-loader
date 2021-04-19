@@ -1,23 +1,26 @@
-import { reject } from "async";
-import BaseService from "./BaseService"
+import BaseService from "./BasicBaseService"
 
-interface MinioPutObjectInterface{
+export interface MinioPutObjectInterface{
   data : any,
   bucketName : String,
   fileName : String,
   contentType ?: String 
 }
 
-interface MinioGetImageInterface{
+export interface MinioGetImageInterface{
   bucketName : String,
   fileName : String,
   contentType ?: String 
 }
-interface MinioServiceInterface extends BaseServiceInterface{
+
+export interface MinioServiceInterface extends BaseServiceInterface{
   baseBucketName : string
+  createBucket : {(bucketName : string, region : any) : Promise<boolean>}
+  putImageObject : {(props : MinioPutObjectInterface) : Promise<object>}
+  getImage : {(props : MinioGetImageInterface) : Promise<object>}
 }
 
-export default BaseService.extend(<MinioServiceInterface>{
+const MinioService : MinioServiceInterface = BaseService.extend(<MinioServiceInterface>{
   /* Important */
   /* Bucket name is strict please read this documentation
      https://docs.rightscale.com/faq/clouds/aws/What_are_valid_S3_bucket_names.html#:~:text=Bucket%20names%20should%20not%20contain,3%20and%2063%20characters%20long */
@@ -95,4 +98,6 @@ export default BaseService.extend(<MinioServiceInterface>{
       });
     });
 	}
-})
+});
+
+export default MinioService;

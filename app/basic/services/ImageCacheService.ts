@@ -1,12 +1,12 @@
-import BaseService from "./BaseService";
+import BasicBaseService from "./BasicBaseService";
 
-interface ImageCacheInterface extends BaseServiceInterface {
+export interface ImageCacheInterface extends BaseServiceInterface {
   expired_cache : number
   getImage : {(fileName : string ) : void }
   saveImage : {(props : object) : void }
 }
 
-export default BaseService.extend(<ImageCacheInterface>{
+const ImageCacheService : ImageCacheInterface =  BasicBaseService.extend(<ImageCacheInterface>{
   expired_cache : 259200,
   getImage(fileName : string){
     return new Promise(function(resolve){
@@ -35,3 +35,5 @@ export default BaseService.extend(<ImageCacheInterface>{
     });
   },
 });
+
+export default ImageCacheService;

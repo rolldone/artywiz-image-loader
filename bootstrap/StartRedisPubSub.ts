@@ -23,6 +23,25 @@ export default function StartRedisPubSub(next : Function){
     receiver: redisSub,
     scope : 'artywiz-image-generator'
   };
-  global.nrp = RedisPubSub(nrpConfig);
+  let nrp = RedisPubSub(nrpConfig);
+  global.nrp = {
+    emit : function(whatKey : string,whatObject : any){
+      if(whatObject instanceof Error){
+        whatObject = global.serializeError(whatObject);
+      }
+      return nrp.emit(whatKey,whatObject);
+    },
+    on : function(whatKey : string, callback : Function){
+      let unsubscribe = nrp.on(whatKey,function(props : any){
+        let testError = global.deserializeError(props);
+        if(testError.toString().indexOf('NonError:',0) == 0){
+          callback(null,props);
+          return;
+        }
+        callback(testError,null);
+      });
+      return unsubscribe;
+    }
+  }
   return next(null);
 }

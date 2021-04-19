@@ -1,5 +1,7 @@
 
 interface BaseProtoInterface{
+  _super ?: Function
+  extend ?: Function
   create ?: any
   __init ?: string
   construct ?: Function
@@ -11,6 +13,8 @@ interface BaseControlerInterface extends BaseProtoInterface{
 }
 
 interface BaseQueueInterface extends BaseProtoInterface{
+  construct ?: {(props : object, callback : Function) : void }
+  returnValidator ?:{(props : object, filter : object) : ValidatorInterface}
   create ?:{(props : any, callback : Function): BaseQueueInterface}
   props ?: any
   callback ?: Function
@@ -19,7 +23,10 @@ interface BaseQueueInterface extends BaseProtoInterface{
   timeout ?: number
   run ?: {() :void}
   process : {(job : any, done : Function) : void }
-  dispatch ?: {(props : any,  callback : Function) : BaseQueueInterface }
+  dispatch ?: {(props : any,   callback : { (props : {
+    err : boolean | null
+    return : any
+  }) : void }  ) : BaseQueueInterface }
   connector ?: {() : Object }
   returnQueue ?: {() : Bull.Queue}
   setJobId ?: { (jobId : string ) : BaseQueueInterface }

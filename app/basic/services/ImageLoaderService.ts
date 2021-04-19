@@ -1,8 +1,13 @@
+import Helpers from "@root/tool/Helpers";
 import ImageLoaderQueue from "../queue/ImageLoaderQueue";
-import BaseService from "./BaseService";
+import BaseService, { BasicBaseServiceInterface } from "./BasicBaseService";
 const md5 = require('md5');
 
-export default BaseService.extend(<BaseServiceInterface>{
+export interface ImageLoaderServiceInterface extends BaseServiceInterface{
+  createJobImageLoader : {(props : object):Promise<string>}
+}
+
+const ImageLoaderService : ImageLoaderServiceInterface = BaseService.extend(<ImageLoaderServiceInterface>{
   async createJobImageLoader(props : any){
     let validator = this.returnValidator(props,{
       url : 'required',
@@ -13,9 +18,9 @@ export default BaseService.extend(<BaseServiceInterface>{
         throw global.CustomError('error.validation_exception',JSON.stringify(validator.errors.all()));
     }
     props.created_at = new Date().getUTCMilliseconds();
-    let hash : string = md5(props.url+props.size);
+    let hash : string = Helpers.generateImagePersistentJobId(props.url,props.size);
     // let queue = await ImageLoaderQueue.getJob(hash);
-    (<BaseQueueInterface>ImageLoaderQueue).dispatch(props,function(props : any){
+    ImageLoaderQueue.dispatch(props,function(props){
       console.log('hash -> ',hash);
       console.log('queue -> ',props);
       // console.log('props',props);
@@ -23,3 +28,5 @@ export default BaseService.extend(<BaseServiceInterface>{
     return hash;
   }
 });
+
+export default ImageLoaderService;

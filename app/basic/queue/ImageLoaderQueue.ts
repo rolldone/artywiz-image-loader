@@ -2,10 +2,15 @@ import BaseQueue from "@root/base/ts/BaseQueue";
 import sharp from 'sharp';
 import axios from 'axios';
 import StoreDataToMinio from "./StoreDataToMinio";
-import MinioService from "../services/MinioService";
+import MinioService, { MinioServiceInterface } from "../services/MinioService";
 import ImageCacheQueue from "./ImageCacheQueue";
 
-export default BaseQueue.extend({
+interface ImageLoaderQueueInteface extends BaseQueueInterface{
+  returnMinioService : {():MinioServiceInterface}
+  getCache : Function
+}
+
+const ImageLoaderQueue : ImageLoaderQueueInteface = BaseQueue.extend(<ImageLoaderQueueInteface>{
   queue_name : 'IMAGE_LOADER_QUEUE',
   returnMinioService(){
     return MinioService.create();
@@ -44,7 +49,7 @@ export default BaseQueue.extend({
             .then((data) => {
 
               if (data instanceof Buffer)
-              (<BaseQueueInterface>ImageCacheQueue).dispatch({
+              ImageCacheQueue.dispatch({
                 data : data.toString('base64'),
                 size : job.data.size,
                 file_name : job.id,
@@ -52,11 +57,11 @@ export default BaseQueue.extend({
               },function(props : any){
                 console.log('ImageCacheQueue.dispatch - ',props);
               }).setTimeout(1000).setJobId(job.id);
-
-              (<BaseQueueInterface>StoreDataToMinio).dispatch({
+              
+              StoreDataToMinio.dispatch({
                 bucketName : job.data.size+"",
                 fileName : job.id+".png",
-                data : data,
+                data : data.toString('base64'),
               } as {
                 bucketName : String,
                 fileName : String,
@@ -66,33 +71,38 @@ export default BaseQueue.extend({
               }).setTimeout(1000).setJobId(job.id);
 
               // global.pubsub.emit(job.id,data);
-              global.nrp.emit(job.id,data);
+              console.log('dataaaa',data);
+              global.nrp.emit(job.id,data.toString('base64'));
               done(null);
             })
             .catch((err)=>{
-              console.log('err - ImageLoaderQueue -> ',err)
+              console.log('err - ImageLoaderQueue process -> ',err)
               // global.pubsub.emit(job.id,err);
-              global.nrp.emit(job.id,err);
+              global.nrp.emit(job.id,global.serializeError(err));
               done(true);
             })
         }else{
           global.nrp.emit(job.id,existImageMinio);
           if (existImageMinio instanceof Buffer)
-          (<BaseQueueInterface>ImageCacheQueue).dispatch({
+          ImageCacheQueue.dispatch({
             data : existImageMinio.toString('base64'),
             size : job.data.size,
             file_name : job.id,
             url : job.data.url
-          },function(props : any){
+          },function(props){
             console.log('ImageCacheQueue.dispatch - ',props);
           }).setTimeout(1000).setJobId(job.id);
           done(null);
         }
       }
     }catch(ex){
+      console.log('ImageLoaderQueue - process - error -> ',ex);
+      global.nrp.emit(job.id,global.serializeError(ex));
       done(true);
-      console.log('ImageLoaderQueue - ex ',ex);
     }
     
   }
 });
+
+
+export default ImageLoaderQueue;

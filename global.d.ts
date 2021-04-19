@@ -11,7 +11,9 @@ declare module NodeJS {
     nrp : any,
     minio : any,
     nohm : any,
-    redis : any
+    redis : any,
+    serializeError : any,
+    deserializeError : any
   }
   interface Process {
     /* Jika kerja di backend define ini manual */

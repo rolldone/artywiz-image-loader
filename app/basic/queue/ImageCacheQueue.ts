@@ -1,7 +1,11 @@
 import BaseQueue from "@root/base/ts/BaseQueue";
-import ImageCacheService from "../services/ImageCacheService";
+import ImageCacheService, { ImageCacheInterface } from "../services/ImageCacheService";
 
-export default BaseQueue.extend({
+export interface ImageCacheQueueInterface extends BaseQueueInterface{
+  returnImageCacheService : {() : ImageCacheInterface}
+}
+
+const ImageCacheQueue : ImageCacheQueueInterface = BaseQueue.extend(<ImageCacheQueueInterface>{
   queue_name : 'IMAGE_CACHE_DATA',
   returnImageCacheService(){
     return ImageCacheService.create();
@@ -18,8 +22,10 @@ export default BaseQueue.extend({
       });
       done(null);
     }catch(ex){
-      console.error('StoreDataToMinio - errorException ',ex);
+      console.error('StoreDataToMinio - process - error ',ex);
       done(null)
     }
   }
 });
+
+export default ImageCacheQueue;

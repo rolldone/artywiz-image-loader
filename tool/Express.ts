@@ -1,3 +1,3 @@
 import Express from 'express';
 
-export default Express;
+export default Express();

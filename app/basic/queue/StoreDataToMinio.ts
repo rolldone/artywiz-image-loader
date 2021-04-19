@@ -1,7 +1,16 @@
 import BaseQueue from "@root/base/ts/BaseQueue";
-import MinioService from "../services/MinioService";
+import MinioService, { MinioServiceInterface } from "../services/MinioService";
 
-export default BaseQueue.extend({
+export interface StoreDataToMinioInterface extends BaseQueueInterface{
+  returnMinioService : {():MinioServiceInterface},
+  dispatch ?: {(props : {
+    bucketName : String,
+    fileName : String,
+    data : string
+  }, callback : Function) : StoreDataToMinioInterface }
+}
+
+const StoreDataToMinio : StoreDataToMinioInterface =  BaseQueue.extend(<StoreDataToMinioInterface>{
   queue_name : 'MINIO_STORE_DATA',
   returnMinioService(){
     return MinioService.create();
@@ -31,8 +40,10 @@ export default BaseQueue.extend({
       // }
       done(null);
     }catch(ex){
-      console.error('StoreDataToMinio - errorException ',ex);
+      console.error('StoreDataToMinio - process - error ',ex);
       done(null)
     }
   }
 });
+
+export default StoreDataToMinio;

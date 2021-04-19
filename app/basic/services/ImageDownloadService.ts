@@ -1,32 +1,42 @@
 import { AppConfig } from "@root/config";
+import Helpers from "@root/tool/Helpers";
 import ImageDownloadQueue from "../queue/ImageDownloadQueue";
-import BaseService from "./BaseService";
+import BaseService, { BasicBaseServiceInterface } from "./BasicBaseService";
 
-interface ImageDownloadServiceInterface extends BaseServiceInterface {
-  downloadImageQueue : {(props : object) : void}
+export interface ImageDownloadServiceInterface extends BasicBaseServiceInterface {
+  downloadImageQueue : {(props :  {
+    url : string,
+    sizes : string
+  }) : Promise<object>}
 }
 
-export default BaseService.extend(<ImageDownloadServiceInterface>{
-  downloadImageQueue : async function(props : any){
-    let validator = this.returnValidator(props,{});
+const ImageDownLoadService : ImageDownloadServiceInterface = BaseService.extend(<ImageDownloadServiceInterface>{
+  downloadImageQueue : async function(props){
+    let validator = this.returnValidator(props,{
+      url : 'required',
+      sizes : 'required'
+    });
     switch(await validator.check()){
       case validator.fails:
         throw global.CustomError('error.validation',JSON.stringify(validator.errors.all()));
     }
     let sizes = JSON.parse(props.sizes||'[]');
     let job_id : string = props.url + props.sizes;
-    
-    (<BaseQueueInterface>ImageDownloadQueue).dispatch({
+    let key = Helpers.generatePersistentJobId(job_id);
+    console.log('downloadImageQueue',key,props);
+    ImageDownloadQueue.dispatch({
       url : props.url,
       sizes : sizes
     },function(props : any){
       console.log('(<BaseQueueInterface>ImageDownloadQueue).dispatch ',props);
-    }).setJobId(job_id).setTimeout(1000);
+    }).setJobId(key).setTimeout(3000);
 
     /* Create key for socket too */
     return {
       socket_url : AppConfig.ROOT_DOMAIN+'/socket',
-      key : job_id
+      key : key
     }
   }
 });
+
+export default ImageDownLoadService;

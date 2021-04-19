@@ -6,7 +6,7 @@ export default BaseRoute.extend({
   onready() : void {
     let self = this;
     self.use('/basic',[],function(route : BaseRouteInterface){
-      route.get('/image/add','basic.image.add',[],(ImageController.create()).add);
+      route.post('/image/add','basic.image.add',[],(ImageController.create()).add);
     });
   }
 });

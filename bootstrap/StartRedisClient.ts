@@ -18,7 +18,6 @@ export default function(next : Function){
     // this will throw all errors nohm encounters - not recommended
     global.redis = redisConnect;
     // example code goes here!
-    next(null);
   })
-  
+  next(null);
 };

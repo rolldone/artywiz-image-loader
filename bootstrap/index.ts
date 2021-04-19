@@ -7,7 +7,9 @@ import StartNohm from "./StartNohm";
 import StartPubSub from "./StartPubSub";
 import StartRedisPubSub from "./StartRedisPubSub";
 import StartRedisClient from '@root/bootstrap/StartRedisClient';
+import StartSerializeError from './StartSerializeError';
 const task = [
+  StartSerializeError,
   StartPubSub,
   StartMasterData,
   StartConfig,

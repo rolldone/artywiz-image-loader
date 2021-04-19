@@ -1,19 +1,18 @@
 import express from 'express';
-import ImageLoaderService from "../services/ImageLoaderService";
+import ImageLoaderService, { ImageLoaderServiceInterface } from "../services/ImageLoaderService";
 import BaseController from './BaseController';
 
 interface ImageRequestInterface extends BaseControlerInterface {
-  returnImageLoaderService : Function
+  returnImageLoaderService : {():ImageLoaderServiceInterface}
   index : Function
 }
 
-export default BaseController.extend(<ImageRequestInterface>{
+const ImageRequestController : ImageRequestInterface = BaseController.extend(<ImageRequestInterface>{
   returnImageLoaderService(){
     return ImageLoaderService.create();
   },
   async index(req : express.Request ,res : express.Response){
     try{
-      let self = this;
       console.log('controller comming !');
       let props = this.getBaseQuery(req,{
         url : req.query.url || 'https://media.wired.com/photos/5a0201b14834c514857a7ed7/master/w_2560%2Cc_limit/1217-WI-APHIST-01.jpg',
@@ -22,20 +21,25 @@ export default BaseController.extend(<ImageRequestInterface>{
       let service = this.returnImageLoaderService();
       let resData1 = await service.createJobImageLoader(props);
       var waitingData = function(resData : string){
-        return new Promise(function(resolve){
+        return new Promise(function(resolve,reject){
           var unsubscribe : any = null;
           var test : string = null;
-          var currentProcess = `test = function(props){
-            // console.log('jobid -> ',props);
-            // console.log('resData -> ',resData);
-            // console.log('prefix');
-            resolve({
-              data : props,
-              remove_listener : test
-            });
-            unsubscribe(function(){
-              // console.log(test.toString());
-            });
+          var currentProcess = `test = function(err,props){
+            try{
+              if(err){
+                throw err;
+              }
+              unsubscribe(function(){
+                resolve({
+                  data : props,
+                  remove_listener : test
+                });
+              });
+            }catch(ex){
+              unsubscribe(function(){
+                reject(ex);
+              });
+            }
           };`
           let r = Math.random().toString(36).substring(7);
           currentProcess = currentProcess.toString().replace('prefix',r);
@@ -53,3 +57,5 @@ export default BaseController.extend(<ImageRequestInterface>{
     }
   }
 });
+
+export default ImageRequestController;
