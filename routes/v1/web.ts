@@ -1,4 +1,4 @@
-import BaseRoute, { BaseRouteInterface } from "../../base/ts/BaseRoute";
+import BaseRoute, { BaseRouteInterface } from "../../base/BaseRoute";
 import ImageReequestController from "@root/app/basic/controllers/ImageRequestController";
 
 export default BaseRoute.extend({

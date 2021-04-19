@@ -1,4 +1,4 @@
-import BaseQueue from "@root/base/ts/BaseQueue";
+import BaseQueue from "@root/base/BaseQueue";
 import MinioService, { MinioServiceInterface } from "../services/MinioService";
 
 export interface StoreDataToMinioInterface extends BaseQueueInterface{

@@ -1,4 +1,4 @@
-import { AsyncJs } from '../../tool';
+import { AsyncJs } from "@root/tool";
 
 export interface BaseStartInterface {
   init : Array<any>

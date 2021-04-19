@@ -1,4 +1,4 @@
-import StaticType from "@root/base/ts/StaticType";
+import StaticType from "@root/base/StaticType";
 
 const md5 = require('md5');
 

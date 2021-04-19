@@ -1,6 +1,6 @@
 import Api from './api';
 import Web from './web';
-import BaseRoute from '../../base/ts/BaseRoute'
+import BaseRoute from '../../base/BaseRoute'
 export {
   Web,
   Api,

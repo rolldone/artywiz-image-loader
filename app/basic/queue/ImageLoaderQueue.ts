@@ -1,4 +1,4 @@
-import BaseQueue from "@root/base/ts/BaseQueue";
+import BaseQueue from "@root/base/BaseQueue";
 import sharp from 'sharp';
 import axios from 'axios';
 import StoreDataToMinio from "./StoreDataToMinio";

@@ -1,7 +1,7 @@
 import 'source-map-support/register'
 require('module-alias/register')
 const {multithread, runOnce} = require('node-multithread');
-import BaseStart, { BaseStartInterface } from './base/ts/BaseStart';
+import BaseStart, { BaseStartInterface } from './base/BaseStart';
 import bootstrap from './bootstrap';
 import { Web, Api } from '@root/routes/v1/index';
 

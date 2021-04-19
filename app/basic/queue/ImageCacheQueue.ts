@@ -1,4 +1,4 @@
-import BaseQueue from "@root/base/ts/BaseQueue";
+import BaseQueue from "@root/base/BaseQueue";
 import ImageCacheService, { ImageCacheInterface } from "../services/ImageCacheService";
 
 export interface ImageCacheQueueInterface extends BaseQueueInterface{

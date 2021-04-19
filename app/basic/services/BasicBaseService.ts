@@ -1,4 +1,4 @@
-import BaseBaseService from '@root/base/ts/BaseService';
+import BaseBaseService from '@root/base/BaseService';
 const md5 = require('md5');
 
 export interface BasicBaseServiceInterface extends BaseServiceInterface{

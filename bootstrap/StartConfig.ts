@@ -1,4 +1,4 @@
-import StaticType from "../base/ts/StaticType";
+import StaticType from "../base/StaticType";
 
 // const config = require('@config');
 // const Auth = require('@app/helper/Auth.js');

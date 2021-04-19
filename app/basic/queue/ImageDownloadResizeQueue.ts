@@ -1,4 +1,4 @@
-import BaseQueue from "@root/base/ts/BaseQueue";
+import BaseQueue from "@root/base/BaseQueue";
 import Helpers from "@root/tool/Helpers";
 import sharp from "sharp";
 import ImageCacheQueue from "./ImageCacheQueue";
