@@ -2,18 +2,19 @@ import express from 'express';
 import ImageLoaderService, { ImageLoaderServiceInterface } from "../services/ImageLoaderService";
 import BaseController from './BaseController';
 
-interface ImageRequestInterface extends BaseControlerInterface {
+interface ImageRequestInterface extends BaseControllerInterface {
   returnImageLoaderService : {():ImageLoaderServiceInterface}
   index : Function
 }
 
-const ImageRequestController : ImageRequestInterface = BaseController.extend(<ImageRequestInterface>{
+const ImageRequestController = BaseController.extend<ImageRequestInterface>({
   returnImageLoaderService(){
     return ImageLoaderService.create();
   },
   async index(req : express.Request ,res : express.Response){
     try{
       console.log('controller comming !');
+      console.log('query',req.query);
       let props = this.getBaseQuery(req,{
         url : req.query.url || 'https://media.wired.com/photos/5a0201b14834c514857a7ed7/master/w_2560%2Cc_limit/1217-WI-APHIST-01.jpg',
         size : parseInt(req.query.size as any) || 500

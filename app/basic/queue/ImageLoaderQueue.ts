@@ -71,7 +71,6 @@ const ImageLoaderQueue : ImageLoaderQueueInteface = BaseQueue.extend(<ImageLoade
               }).setTimeout(1000).setJobId(job.id);
 
               // global.pubsub.emit(job.id,data);
-              console.log('dataaaa',data);
               global.nrp.emit(job.id,data.toString('base64'));
               done(null);
             })

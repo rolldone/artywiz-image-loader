@@ -2,26 +2,13 @@ var NameRouter = require('named-routes');
 import express, { Router } from 'express';
 const uberproto = require('uberproto');
 
-export interface BaseRouteInterface{
-  childRouter ?: express.Router
-  router ?: typeof NameRouter
-  app ?: any
-  _path ?: string
-  _middleware ?: Array<any>
-  set ?: Function
-  use ?: Function
-  get ?: Function
-  post ?: Function
-  baseRoute : string 
-  onready : Function
-}
-
 export default uberproto.extend({
   __init : 'construct',
   construct(app : any){
     this.router.extendExpress(app);
     this.router.registerAppHelpers(app);
     this.app = app;
+    this.nrp = global.nrp;
     /* Child route inside .use */
     this.childRouter = express.Router();
     this.router.extendExpress(this.childRouter);
@@ -30,22 +17,19 @@ export default uberproto.extend({
   childRouter : null,
   router : new NameRouter(),
   app : null,
+  nrp : null,
   baseRoute : '',
   _path : '',
   _middleware : [],
   onready(){
     console.log('onready - Override this function');
   },
-  // use : function(path,middleware=[],callbackRouter){
-  //   path = this.baseRoute+path;
-  //   callbackRouter(this);
-  //   this.app.use(path,middleware,this.childRouter);
-  // },
-  use(path : string,middleware : Array<any>=[],callbackRouter : Function) : void{
+  use(path,middleware,callbackRouter : Function){
     this._path = path;
     this._middleware = middleware;
-    callbackRouter(this);
+    callbackRouter(<BaseRouteInterface>this);
   },
+  // private
   set(action : string,...props : Array<any>){
     props[0]=this.baseRoute+(this._path||'')+props[0];
     console.log('action',action);
@@ -63,6 +47,27 @@ export default uberproto.extend({
   },
   post(...props:Array<any>){
     this.set('post',...props);
+  },
+  // private
+  setNrp(action : string, ...props : Array<any>){
+    this.baseRoute = null;
+    let basRoute = global.node_identity == ""?"":global.node_identity+".";
+    props[0]=(this._path||'')+"."+props[0];
+    props[0]=this.removeDuplicate(props[0],'.');
+    props[0]=basRoute+props[0];
+    console.log('npm -> action',action);
+    console.log('npm -> props',props);
+    console.log('npm -> _path',this._path);
+    console.log('npm -> action ->',props[0]);
+
+    this.nrp[action](...props);
+  },
+  useNrp(path : string,callbackRouter : Function) : void{
+    this._path = path;
+    callbackRouter(<BaseRouteInterface>this);
+  },
+  nrpOn(...props:Array<any>){
+    this.setNrp('on',...props);
   },
   displayRoute(req : any, res : any){
     let routesByNameAndMethod = (function(datas){
@@ -89,5 +94,22 @@ export default uberproto.extend({
       return : displayRoutes
     }
     return res.status(displayRoutes.status_code).send(displayRoutes);
+  },
+  removeDuplicate(x,theChar){
+    let tt : Array<any> = [...x];
+    var old = "";
+    var newS = "";
+    for(var a=0;a<tt.length;a++){
+      old = tt[a-1]||'';
+      if(tt[a] == theChar){
+        newS = tt[a]+"";
+      }else{
+        newS = null;
+      }
+      if(old == newS){
+        tt.splice(a,1);
+      }
+    }
+    return tt.join("");
   }
 } as BaseRouteInterface)

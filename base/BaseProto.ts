@@ -1,6 +1,8 @@
 const uberproto = require('uberproto');
 
-export default uberproto.extend({
+const UberProto : BaseProtoInterface<any> = uberproto;
+
+export default UberProto.extend<BaseProtoInterface<any>>({
   __init : 'construct',
-  construct : function(){}
-})
+    construct : function(){}
+});

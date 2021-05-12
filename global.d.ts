@@ -8,12 +8,14 @@ declare module NodeJS {
     queues : any,
     pubsub : any,
     masterData : MasterDataInterface,
-    nrp : any,
+    nrp : RedisPubSubListener,
     minio : any,
     nohm : any,
     redis : any,
     serializeError : any,
-    deserializeError : any
+    deserializeError : any,
+    io : any,
+    node_identity : string
   }
   interface Process {
     /* Jika kerja di backend define ini manual */

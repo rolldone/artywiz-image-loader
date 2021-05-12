@@ -2,20 +2,21 @@ import BaseController from "../BaseController";
 import express from 'express';
 import ImageDownLoadService, { ImageDownloadServiceInterface } from "../../services/ImageDownloadService";
 
-interface ImageControllerInterface extends BaseControlerInterface{
-  add ?: {(req : express.Request, res : express.Response) : Promise<any>}
-  returnImageDownloadService : any 
+interface ImageControllerInterface extends BaseControllerInterface{
+  returnImageDownloadService : any
+  requestScanning ?: {(req : express.Request, res : express.Response) : Promise<void>}
+  add : {(req : express.Request, res : express.Response) : Promise<void>};
 }
 interface resDataDownloadImageRequestInterface {
   url : string,
   key : string
 }
 
-const ImageController : ImageControllerInterface = BaseController.extend(<ImageControllerInterface>{
+const ImageController = BaseController.extend<ImageControllerInterface>({
   returnImageDownloadService(){
     return ImageDownLoadService.create();
   },
-  async add(req : express.Request, res : express.Response){
+  async requestScanning(req : express.Request, res : express.Response){
     let self = this;
     try{
       let props = req.body;
@@ -66,6 +67,14 @@ const ImageController : ImageControllerInterface = BaseController.extend(<ImageC
       }
       res.send(response).status(response.status_code);
       return;
+    }catch(ex){
+      return this.returnSimpleError(ex,res);
+    }
+  },
+  async add(req : express.Request, res : express.Response){
+    let self = this;
+    try{
+      
     }catch(ex){
       return this.returnSimpleError(ex,res);
     }
