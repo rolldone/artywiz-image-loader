@@ -1,12 +1,13 @@
-# Base information
+## Heading Artywiz Image Loader
+
+### Base information
 - Service ini untuk cluster menggunakan pm2 bukan dari require('cluster');
 - Koneksinya via redis pubsub
 - Database minio sebagai image cache dan redis sebagai data cache 
 
-# Docker compose config
-
+### Docker compose config
+Create folder image_loader_app for this project and outside this project folder create docker-compose.yaml like a below
 ```
-# Outside project folder
 version: "3.8"
 services:
   image_loader:
